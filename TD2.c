@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
@@ -33,30 +34,39 @@ void window_reshape(int width, int height) {
 }
 void draw_pixel(float x, float y){
     glBegin(GL_POINTS);
-        glVertex2d(x,y);
+        glVertex2f(x,y);
     glEnd();
 }
 
-void bresenham(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
-    float dy= y2-y1;
-    float dx= x2-x1;
+void bresenham(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, int IncrY, int IncrX, float dx, float dy){
     float IncreE = 2*dy;
     float IncreNE= 2*(dy-dx);   
     float dp = 2*dy -dx;
     float y = y1;
-    for (int x=x1; x<x2; x++){
+    //printf("%f\t%f\t%f\t%f \n", x1, y1, x2, y2);
+    for (float x=x1; x<=x2; x+=IncrX){
         draw_pixel(x, y);
+
         if(dp<=0){
             dp+=IncreE;
         }
         else{
-            y++;
+            y+=IncrY;
             dp+=IncreNE;
         }
     }
 }
+
+void bresenhamGeneral(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
+    int dy= y2-y1;
+    int dx= x2-x1;
+    int Incrx=(dx>0)? 1: -1;
+    dx= (Incrx==-1)? -dx:dx;
+    int Incry=(dy>0)? 1: -1;
+    dx= (Incry==-1)? -dy:dy;
+    (dx>=dy)? bresenham(x1,x2,y1,y2, Incry, Incrx, dx, dy): bresenham(y1,y2,x1,x2, Incrx, Incry,dx, dy);
+}
 void render_scene() {
-    bresenham(0,100.0,0,100);
     //glBegin(GL_POLYGON);
         /*glVertex2d(-128, -128);
         glVertex2d(128, -128);
@@ -71,14 +81,19 @@ void render_scene() {
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-    render_scene();
+    for(int i=0; i < nuage.tab_size && nuage.tab_size >= 2; i+=2){
+        printf("%d %d\n", i, nuage.tab_size);
+        bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
+    }
     glFlush();
 }
 void mouse_click(int button, int state, int x, int y){
     float x2= x-250;
-    float y2= -(y-250);
-    insererPoint(&nuage, x2, y2);
-    glutPostRedisplay();
+    float y2= -(y-250); 
+    if (button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
+        insererPoint(&nuage, x2, y2);
+        glutPostRedisplay();
+    }
 }
 
 int main(int argc, char** argv) {
