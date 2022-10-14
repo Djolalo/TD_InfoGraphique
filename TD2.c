@@ -17,7 +17,8 @@ PointCloud nuage;
 
 int height = 500;
 int width = 500;
-
+int click=0;
+int increments;
 void initPointCloud (PointCloud *nuage){nuage->tab_size=0;}
 
 void insererPoint(PointCloud *p, float x, float y){
@@ -41,12 +42,10 @@ void draw_pixel(float x, float y){
 void bresenham(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, int IncrY, int IncrX, float dx, float dy){
     float IncreE = 2*dy;
     float IncreNE= 2*(dy-dx);   
-    float dp = 2*dy -dx;
+    float dp = 2*(dy -dx);
     float y = y1;
-    //printf("%f\t%f\t%f\t%f \n", x1, y1, x2, y2);
-    for (float x=x1; x<=x2; x+=IncrX){
-        draw_pixel(x, y);
-
+    for (float x=x1; x!=x2; x+=IncrX){
+        (increments==1)?draw_pixel(x, y):draw_pixel(y,x);
         if(dp<=0){
             dp+=IncreE;
         }
@@ -58,31 +57,20 @@ void bresenham(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, int IncrY, int In
 }
 
 void bresenhamGeneral(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
-    int dy= y2-y1;
-    int dx= x2-x1;
-    int Incrx=(dx>0)? 1: -1;
+    float dy= y2-y1;
+    float dx= x2-x1;
+    float Incrx=(dx>0)? 1: -1;
     dx= (Incrx==-1)? -dx:dx;
-    int Incry=(dy>0)? 1: -1;
-    dx= (Incry==-1)? -dy:dy;
-    (dx>=dy)? bresenham(x1,x2,y1,y2, Incry, Incrx, dx, dy): bresenham(y1,y2,x1,x2, Incrx, Incry,dx, dy);
+    float Incry=(dy>0)? 1: -1;
+    dy= (Incry==-1)? -dy:dy;
+    (dx>=dy)? bresenham(x1,x2,y1,y2, Incry, Incrx, dx, dy), increments=1: bresenham(y1,y2,x1,x2, Incrx, Incry,dy, dx), increments=0;
 }
-void render_scene() {
-    //glBegin(GL_POLYGON);
-        /*glVertex2d(-128, -128);
-        glVertex2d(128, -128);
-        glVertex2d(128, 128);
-        glVertex2d(-128, 128);
-    */
-   /*for(int i=0; i< nuage.tab_size; i++){
-    glVertex2d(nuage.tabPos[i][0], nuage.tabPos[i][1]);
-   }*/
-    //glEnd();
-}
+
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-    for(int i=0; i < nuage.tab_size && nuage.tab_size >= 2; i+=2){
-        printf("%d %d\n", i, nuage.tab_size);
+    for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
+        printf("%d %d\n Le trace se fera sur: %f\t%f\ten x, et %f\t%f\n", i, nuage.tab_size, nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
         bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
     glFlush();
@@ -92,8 +80,10 @@ void mouse_click(int button, int state, int x, int y){
     float y2= -(y-250); 
     if (button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
         insererPoint(&nuage, x2, y2);
-        glutPostRedisplay();
+        click++;
     }
+    if(click%2==0)
+            glutPostRedisplay();
 }
 
 int main(int argc, char** argv) {
