@@ -82,6 +82,36 @@ void bresenhamGeneral(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
     }
 }
 
+void  draw_Circle(float x, float y){
+    draw_pixel(x,y);
+    draw_pixel(x,-y);
+    draw_pixel(-x,y);
+    draw_pixel(-x,-y);
+    draw_pixel(y,x);
+    draw_pixel(y,-x);
+    draw_pixel(-y,x);
+    draw_pixel(-y,-x);
+}
+
+void PointMilieuCercle(float r){
+float x,y,d;
+    x=0;
+    y=r;
+    d= 1.25-r;
+    draw_pixel(x,y);
+    draw_pixel(x,-y);
+    while(y>x){
+        if(d<0)
+            d+=(2*x)+3;
+        else{
+            d+=(2*x)-(2*y)+5;
+            y--;
+        }
+        x++;
+        draw_Circle(x,y);
+    }
+}
+
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -89,6 +119,7 @@ void window_display() {
         if(nuage.tab_size>=i+2)
             bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
+    PointMilieuCercle(50);
     glFlush();
 }
 void mouse_click(int button, int state, int x, int y){
