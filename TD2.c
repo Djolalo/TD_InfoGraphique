@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
@@ -6,7 +7,7 @@
 #include <windows.h>
 #endif
 #define MAX_POINTS_ON_FRAME 1000
-
+#define CIRCLETIME 'r'
 
 typedef struct{
     GLfloat tabPos[MAX_POINTS_ON_FRAME][2];
@@ -18,6 +19,7 @@ PointCloud nuage;
 int height = 500;
 int width = 500;
 int click=0;
+unsigned char lastKey;
 void initPointCloud (PointCloud *nuage){nuage->tab_size=0;}
 
 void insererPoint(PointCloud *p, float x, float y){
@@ -93,11 +95,12 @@ void  draw_Circle(float x, float y){
     draw_pixel(-y,-x);
 }
 
-void PointMilieuCercle(float r){
+void PointMilieuCercle(GLfloat x1,GLfloat y1, GLfloat x2, GLfloat y2){
 float x,y,d;
     x=0;
-    y=r;
-    d= 1.25-r;
+    y=sqrtf(powf(x2-x1,2)+powf(y2-y1,2));
+    d= 1.25-y;
+    glViewport(x1,y1,width,height);
     draw_pixel(x,y);
     draw_pixel(x,-y);
     while(y>x){
@@ -110,6 +113,7 @@ float x,y,d;
         x++;
         draw_Circle(x,y);
     }
+    glViewport(0, 0, width, height);
 }
 
 void window_display() {
@@ -117,9 +121,8 @@ void window_display() {
     glLoadIdentity();
     for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
         if(nuage.tab_size>=i+2)
-            bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
+            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
-    PointMilieuCercle(50);
     glFlush();
 }
 void mouse_click(int button, int state, int x, int y){
@@ -133,6 +136,10 @@ void mouse_click(int button, int state, int x, int y){
             glutPostRedisplay();
 }
 
+void keyboard_press(unsigned char key, int x, int y){
+    lastKey=key;
+}
+
 int main(int argc, char** argv) {
     initPointCloud(&nuage);
     glutInit (&argc , argv);
@@ -143,6 +150,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(window_display);
     glutReshapeFunc(window_reshape);
     glutMouseFunc(mouse_click);
+    glutKeyboardFunc(keyboard_press);
     glutMainLoop();
     return 0 ;
 }
