@@ -121,7 +121,7 @@ void window_display() {
     glLoadIdentity();
     for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
         if(nuage.tab_size>=i+2)
-            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
+            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
     glFlush();
 }
