@@ -7,7 +7,7 @@
 #include <windows.h>
 #endif
 #define MAX_POINTS_ON_FRAME 1000
-#define CIRCLETIME 'r'
+#define CIRCLETIME 'c'
 
 typedef struct{
     GLfloat tabPos[MAX_POINTS_ON_FRAME][2];
@@ -116,12 +116,93 @@ float x,y,d;
     glViewport(0, 0, width, height);
 }
 
+#include <stdbool.h>
+
+int calcule_code (float x, float y, float xmin, float ymin, float xmax, float ymax) {
+int code = 0 ;
+    if( x < xmin )
+        code += 1 ;
+    if( x > xmax)
+        code += 2 ;
+    if( y < ymin )
+        code += 4 ;
+    if(y > ymax)
+        code += 8 ;
+    return code ;
+}
+
+void cohen_sutherland(float xa, float ya, float xb, float yb, float xmin, float ymin, float xmax, float ymax, float attribut){
+    int codeA = calcule_code(xa,ya,xmin,ymin,xmax,ymax);
+    int codeB = calcule_code(xb,yb,xmin,ymin,xmax,ymax);
+    float m= (yb-ya)/(xb-xa);
+    float x,y;
+    int codeExt;
+    bool accept=false;
+    bool fin= false;
+    while(!fin){
+        if(codeA==0 && codeB==0){
+            accept=true;
+            fin=true;
+        }
+        else{
+            if((codeA&codeB)!=0){
+                fin=true;
+            }
+            else{
+                codeExt =codeA;
+                if(codeA==0){
+                    codeExt = codeB;
+                }
+                if((codeExt&8)==8){
+                    x = xa+(ymax-ya)/m;
+                    y  = ymax; 
+                }
+                else{
+                    if((codeExt&4)==4){
+                        x= xa+(ymin-ya)/m;
+                        y=ymin;
+                    }
+                    else{
+                        if((codeExt&2)==2){
+                            y= ya+(xmax-xa)*m;
+                            x=xmax;
+                        }
+                        else{
+                            if((codeExt&1)==1){
+                                y= ya+(xmin-xa)*m;
+                                x= xmin;
+                            }
+                        }
+                    }
+                }
+                if(codeExt==codeA){
+                    xa=x;
+                    ya=y;
+                    codeA=calcule_code(xa,ya,xmin,ymin,xmax,ymax);
+                }
+                else{
+                    xb=x;
+                    yb=y;
+                    codeB=calcule_code(xb,yb,xmin,ymin,xmax,ymax);
+                }
+            }
+        }
+    }
+    if(accept){
+        bresenhamGeneral(xa, xb,ya,yb);
+    }
+}
+
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
     for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
+        bresenhamGeneral(-50,50,50,50);
+        bresenhamGeneral(-50,-50,50,-50);
+        bresenhamGeneral(50,50,50,-50);
+        bresenhamGeneral(-50,50,-50,-50);
         if(nuage.tab_size>=i+2)
-            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
+            (lastKey==CIRCLETIME)?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):cohen_sutherland(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1], -50,-50,50,50,1);
     }
     glFlush();
 }
