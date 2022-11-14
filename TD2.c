@@ -2,6 +2,8 @@
 #include <math.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "clipping.h"
+#include "trace.h"
 
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
@@ -34,56 +36,8 @@ void window_reshape(int width, int height) {
     glOrtho(-width/2, width/2,-height/2, height/2, -1.0 , 1.0);
     glMatrixMode(GL_MODELVIEW);
 }
-void draw_pixel(float x, float y){
-    glBegin(GL_POINTS);
-        glVertex2f(x,y);
-    glEnd();
-}
 
-void bresenham(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, int IncrX,int IncrY, float dx, float dy, int inversion){
-    float IncreE = 2*dy;
-    float IncreNE= 2*(dy-dx);   
-    float dp = 2*(dy -dx);
-    float y = y1;
-    for (float x=x1; x!=x2; x+=IncrX){
-        (inversion==1)?draw_pixel(x, y) :draw_pixel(y,x);
-        if(dp<=0){
-            dp+=IncreE;
-        }
-        else{
-            y+=IncrY;
-            dp+=IncreNE;
-        }
-    }
-}
-
-void bresenhamGeneral(GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
-    float dy= y2-y1;
-    float dx= x2-x1;
-    float Incry, Incrx;
-    if(dx>0){
-        Incrx= 1;
-    }
-    else{
-        Incrx=-1;
-        dx=-dx;
-    }
-    if(dy>0){
-        Incry= 1;
-    }
-    else{
-        dy=-dy;
-        Incry=-1;
-    }
-    if(dx>=dy){
-        bresenham(x1,x2,y1,y2,Incrx,Incry, dx, dy, 1);
-    }    
-    else{
-
-        bresenham(y1,y2,x1,x2,Incry,Incrx,dy, dx, 0);
-    }
-}
-
+/*
 void  draw_Circle(float x, float y){
     draw_pixel(x,y);
     draw_pixel(x,-y);
@@ -114,84 +68,8 @@ float x,y,d;
         draw_Circle(x,y);
     }
     glViewport(0, 0, width, height);
-}
+}*/
 
-#include <stdbool.h>
-
-int calcule_code (float x, float y, float xmin, float ymin, float xmax, float ymax) {
-int code = 0 ;
-    if( x < xmin )
-        code += 1 ;
-    if( x > xmax)
-        code += 2 ;
-    if( y < ymin )
-        code += 4 ;
-    if(y > ymax)
-        code += 8 ;
-    return code ;
-}
-
-void cohen_sutherland(float xa, float ya, float xb, float yb, float xmin, float ymin, float xmax, float ymax, float attribut){
-    int codeA = calcule_code(xa,ya,xmin,ymin,xmax,ymax);
-    int codeB = calcule_code(xb,yb,xmin,ymin,xmax,ymax);
-    float m= (yb-ya)/(xb-xa);
-    float x,y;
-    int codeExt;
-    bool accept=false;
-    bool fin= false;
-    while(!fin){
-        if(codeA==0 && codeB==0){
-            accept=true;
-            fin=true;
-        }
-        else{
-            if((codeA&codeB)!=0){
-                fin=true;
-            }
-            else{
-                codeExt =codeA;
-                if(codeA==0){
-                    codeExt = codeB;
-                }
-                if((codeExt&8)==8){
-                    x = xa+(ymax-ya)/m;
-                    y  = ymax; 
-                }
-                else{
-                    if((codeExt&4)==4){
-                        x= xa+(ymin-ya)/m;
-                        y=ymin;
-                    }
-                    else{
-                        if((codeExt&2)==2){
-                            y= ya+(xmax-xa)*m;
-                            x=xmax;
-                        }
-                        else{
-                            if((codeExt&1)==1){
-                                y= ya+(xmin-xa)*m;
-                                x= xmin;
-                            }
-                        }
-                    }
-                }
-                if(codeExt==codeA){
-                    xa=x;
-                    ya=y;
-                    codeA=calcule_code(xa,ya,xmin,ymin,xmax,ymax);
-                }
-                else{
-                    xb=x;
-                    yb=y;
-                    codeB=calcule_code(xb,yb,xmin,ymin,xmax,ymax);
-                }
-            }
-        }
-    }
-    if(accept){
-        bresenhamGeneral(xa, xb,ya,yb);
-    }
-}
 
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -202,10 +80,11 @@ void window_display() {
         bresenhamGeneral(50,50,50,-50);
         bresenhamGeneral(-50,50,-50,-50);
         if(nuage.tab_size>=i+2)
-            (lastKey==CIRCLETIME)?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):cohen_sutherland(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1], -50,-50,50,50,1);
+            /*(lastKey==CIRCLETIME)?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):*/cohen_sutherland(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1], -50,-50,50,50,1);
     }
     glFlush();
 }
+
 void mouse_click(int button, int state, int x, int y){
     float x2= x-width/2;
     float y2= -(y-height/2); 
