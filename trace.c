@@ -1,5 +1,3 @@
-#include <GL/glu.h>
-#include <GL/glut.h>
 #include "trace.h"
 
 void draw_pixel(float x, float y){

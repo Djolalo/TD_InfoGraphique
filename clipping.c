@@ -1,6 +1,7 @@
-#include <stdbool.h>
+#include "clipping.h"
 #include "trace.h"
-#include "trace.c"
+#include <stdbool.h>
+#include <math.h>
 
 int calcule_code (float x, float y, float xmin, float ymin, float xmax, float ymax) {
 int code = 0 ;
@@ -72,6 +73,10 @@ void cohen_sutherland(float xa, float ya, float xb, float yb, float xmin, float 
         }
     }
     if(accept){
+        xa = floorf(xa);
+        xb = floorf(xb);
+        ya = floorf(ya);
+        yb = floorf(yb);
         bresenhamGeneral(xa, xb,ya,yb);
     }
 }

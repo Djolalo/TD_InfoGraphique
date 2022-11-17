@@ -2,9 +2,9 @@
 #include <math.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include "clipping.h"
+#include <math.h>
 #include "trace.h"
-
+#include "clipping.h"
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
 #endif
