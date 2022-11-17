@@ -1,4 +1,4 @@
-#include "trace.h"
+#include "include/trace.h"
 
 void draw_pixel(float x, float y){
     glBegin(GL_POINTS);
@@ -49,3 +49,15 @@ void bresenhamGeneral(float x1, float x2, float y1, float y2){
         bresenham(y1,y2,x1,x2,Incry,Incrx,dy, dx, 0);
     }
 }
+
+void  draw_Circle(float x, float y){
+    draw_pixel(x,y);
+    draw_pixel(x,-y);
+    draw_pixel(-x,y);
+    draw_pixel(-x,-y);
+    draw_pixel(y,x);
+    draw_pixel(y,-x);
+    draw_pixel(-y,x);
+    draw_pixel(-y,-x);
+}
+

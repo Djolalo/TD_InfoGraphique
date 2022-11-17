@@ -2,9 +2,8 @@
 #include <math.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <math.h>
-#include "trace.h"
-#include "clipping.h"
+#include "include/trace.h"
+#include "include/clipping.h"
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
 #endif
@@ -48,7 +47,6 @@ void  draw_Circle(float x, float y){
     draw_pixel(-y,x);
     draw_pixel(-y,-x);
 }
-
 void PointMilieuCercle(GLfloat x1,GLfloat y1, GLfloat x2, GLfloat y2){
 float x,y,d;
     x=0;
