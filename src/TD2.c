@@ -3,7 +3,6 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include "include/trace.h"
-#include "include/clipping.h"
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
 #endif
@@ -36,17 +35,7 @@ void window_reshape(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-/*
-void  draw_Circle(float x, float y){
-    draw_pixel(x,y);
-    draw_pixel(x,-y);
-    draw_pixel(-x,y);
-    draw_pixel(-x,-y);
-    draw_pixel(y,x);
-    draw_pixel(y,-x);
-    draw_pixel(-y,x);
-    draw_pixel(-y,-x);
-}
+
 void PointMilieuCercle(GLfloat x1,GLfloat y1, GLfloat x2, GLfloat y2){
 float x,y,d;
     x=0;
@@ -66,22 +55,18 @@ float x,y,d;
         draw_Circle(x,y);
     }
     glViewport(0, 0, width, height);
-}*/
-
+}
 
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
     for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
-        bresenhamGeneral(-50,50,50,50);
-        bresenhamGeneral(-50,-50,50,-50);
-        bresenhamGeneral(50,50,50,-50);
-        bresenhamGeneral(-50,50,-50,-50);
         if(nuage.tab_size>=i+2)
-            /*(lastKey==CIRCLETIME)?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):*/cohen_sutherland(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1], -50,-50,50,50,1);
+            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
     glFlush();
 }
+
 
 void mouse_click(int button, int state, int x, int y){
     float x2= x-width/2;
