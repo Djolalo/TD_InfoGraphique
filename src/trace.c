@@ -24,6 +24,13 @@ void bresenham(float x1, float x2, float y1, float y2, int IncrX,int IncrY, floa
 }
 
 void bresenhamGeneral(float x1, float x2, float y1, float y2){
+    /*
+    On ne garde que la partie  entière des coordonées, pour éviter tout problèmme dans la bouclé incrémentale.
+    */
+    x1 = floorf(x1);
+    x2 = floorf(x2);
+    y1 = floorf(y1);
+    y2 = floorf(y2);
     float dy= y2-y1;
     float dx= x2-x1;
     float Incry, Incrx;

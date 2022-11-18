@@ -2,17 +2,13 @@
 #include <math.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "include/pointManaging.h"
 #include "include/trace.h"
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
 #endif
-#define MAX_POINTS_ON_FRAME 1000
 #define CIRCLETIME 'c'
 
-typedef struct{
-    GLfloat tabPos[MAX_POINTS_ON_FRAME][2];
-    int tab_size;
-}PointCloud;
 
 PointCloud nuage;
 
@@ -20,13 +16,7 @@ int height = 500;
 int width = 500;
 int click=0;
 unsigned char lastKey;
-void initPointCloud (PointCloud *nuage){nuage->tab_size=0;}
 
-void insererPoint(PointCloud *p, float x, float y){
-    p->tabPos[p->tab_size][0]=x;
-    p->tabPos[p->tab_size][1]=y;
-    p->tab_size++;
-}
 void window_reshape(int width, int height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
