@@ -1,13 +1,12 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include  "include/pointManaging.h"
-
+#include "include/pointManaging.h"
 #if defined (_WIN32) || defined (WIN32)
 #include <windows.h>
 #endif
 
-
 PointCloud nuage;
+
 
 void window_reshape(int width, int height) {
     glViewport(0, 0, width, height);
@@ -20,11 +19,6 @@ void window_reshape(int width, int height) {
 void render_scene() {
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_POLYGON);
-        /*glVertex2d(-128, -128);
-        glVertex2d(128, -128);
-        glVertex2d(128, 128);
-        glVertex2d(-128, 128);
-    */
    for(int i=0; i< nuage.tab_size; i++){
     glVertex2d(nuage.tabPos[i][0], nuage.tabPos[i][1]);
    }
