@@ -1,6 +1,7 @@
 #include "include/pointManaging.h"
 
 
+
 void initPointCloud (PointCloud *nuage){nuage->tab_size=0;}
 
 void insererPoint(PointCloud *p, float x, float y){

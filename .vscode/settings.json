@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "trace.h": "c"
+        "trace.h": "c",
+        "pointmanaging.h": "c",
+        "clipping.h": "c",
+        "geometrictransformations.h": "c"
     }
 }

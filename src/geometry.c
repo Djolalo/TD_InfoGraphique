@@ -1,5 +1,5 @@
-#include "include/geometricTransformations.h"
 #include "include/pointManaging.h"
+#include "include/geometry.h"
 
 void translaterPolygone(PointCloud *nuage, float dx, float dy){
     for(int i=0;  i<nuage->tab_size; i++){
@@ -15,9 +15,9 @@ void scalePolygone(PointCloud *nuage, float deltax, float deltay){
     }
 }
 
-void rotatePolygone(PointCloud *nuage, double alpha){
+void rotatePolygone(PointCloud *nuage, double cos, double sin){
     for(int i=0;  i<nuage->tab_size; i++){
-        nuage->tabPos[i][0]=nuage->tabPos[i][0]*cos(alpha)-nuage->tabPos[i][1]*sin(alpha);
-        nuage->tabPos[i][1]=nuage->tabPos[i][0]*sin(alpha)-nuage->tabPos[i][1]*cos(alpha);
+        nuage->tabPos[i][0]=nuage->tabPos[i][0]*cos-nuage->tabPos[i][1]*sin;
+        nuage->tabPos[i][1]=nuage->tabPos[i][0]*sin-nuage->tabPos[i][1]*cos;
     }
 }
