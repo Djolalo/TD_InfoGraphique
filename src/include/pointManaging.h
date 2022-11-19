@@ -8,5 +8,5 @@ typedef struct {
 }PointCloud;
 void initPointCloud (PointCloud *nuage);
 void insererPoint(PointCloud *p, float x, float y);
-
+void afficheNuage(PointCloud p);
 #endif

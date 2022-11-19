@@ -10,11 +10,13 @@
 
 PointCloud nuage;
 PointCloud translater;
+
 unsigned char lastKey;
 int height = 500;
 int width = 500;
 int click=0;
 unsigned char lastKey;
+
 void window_reshape(int width, int height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -25,10 +27,12 @@ void window_reshape(int width, int height) {
 
 void render_scene() {
     glColor3f(1.0, 1.0, 1.0);
+    PointCloud copie=nuage;
+    rotatePolygone(&copie, 0.5,0.86602540378);
     glBegin(GL_POLYGON);
-   for(int i=0; i< nuage.tab_size; i++){
-    glVertex2d(nuage.tabPos[i][0], nuage.tabPos[i][1]);
-   }
+    for(int i=0; i<copie.tab_size;i++){
+        glVertex2d(copie.tabPos[i][0], copie.tabPos[i][1]);
+    }
     glEnd();
 }
 
@@ -42,9 +46,9 @@ void mouse_click(int button, int state, int x, int y){
     float x2= x-width/2;
     float y2= -(y-height/2); 
     if (button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
-        (lastKey!=('m'||'r'||'s'))?insererPoint(&nuage, x2, y2),click++:insererPoint(&translater,x2,y2),click++;
-    }
-    if(button==GLUT_LEFT_BUTTON && state==GLUT_UP){
+        /*((lastKey!='m')||(lastKey!='r')!=(lastKey!='s')&&((click%2)==0))?*/insererPoint(&nuage, x2, y2),click++;/*:insererPoint(&translater,x2,y2),click++,printf("J'insère en translations");
+    */}
+    /*if(button==GLUT_LEFT_BUTTON && state==GLUT_UP){
        switch (lastKey)
        {
        case 'm':
@@ -56,13 +60,16 @@ void mouse_click(int button, int state, int x, int y){
         case 's':
         printf("j\'aggrandis !");
         insererPoint(&translater,x2,y2);
-        scalePolygone(&nuage,translater.tabPos[0][translater.tab_size-2]-translater.tabPos[0][translater.tab_size-1],translater.tabPos[1][translater.tab_size-2]-translater.tabPos[0][translater.tab_size-1]);
+        double xfactor= translater.tabPos[0][translater.tab_size-1]/translater.tabPos[0][translater.tab_size-2];
+        double yfactor= translater.tabPos[1][translater.tab_size-1]/translater.tabPos[1][translater.tab_size-2];
+        scalePolygone(&nuage,xfactor,yfactor);
         click++;
         break;
 
         case 'r':
         printf("je tourne");
         insererPoint(&translater,x2,y2);
+        afficheNuage(translater);
         double norme=sqrt(pow(translater.tabPos[1][translater.tab_size-2]-translater.tabPos[1][translater.tab_size-1],2)+pow(translater.tabPos[0][translater.tab_size-2]-translater.tabPos[0][translater.tab_size-1],2));
         double cos=(translater.tabPos[0][translater.tab_size-2]-translater.tabPos[0][translater.tab_size-1])/norme;
         double sin=(translater.tabPos[1][translater.tab_size-2]-translater.tabPos[1][translater.tab_size-1])/norme; 
@@ -70,9 +77,8 @@ void mouse_click(int button, int state, int x, int y){
         click++;
         break;
        } 
-    }
-    if(click%2==0)
-            glutPostRedisplay();
+    }*/
+    glutPostRedisplay();
 }
 
 void keyboard_press(unsigned char key, int x, int y){
