@@ -1,6 +1,6 @@
 #ifndef pointManaging
 #define pointManaging
-
+#include <stdio.h>
 #define MAX_POINTS_ON_FRAME 1000
 typedef struct {
     float tabPos[MAX_POINTS_ON_FRAME][2];
@@ -9,4 +9,7 @@ typedef struct {
 void initPointCloud (PointCloud *nuage);
 void insererPoint(PointCloud *p, float x, float y);
 void afficheNuage(PointCloud p);
+float iemeAbcisse(int i, PointCloud p);
+float iemeOrdonnee(int i, PointCloud p);
+int tabSize(PointCloud p);
 #endif

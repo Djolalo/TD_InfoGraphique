@@ -4,5 +4,6 @@
         "pointmanaging.h": "c",
         "clipping.h": "c",
         "geometrictransformations.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
