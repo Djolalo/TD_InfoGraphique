@@ -25,7 +25,6 @@ typedef struct {
 float xMin(segment s);
 float yMax(segment s);
 float im(segment s);
-void drawLine(float xa, float y, float xb);
 /**
  * Primitives de base relatives pour notre liste
 */

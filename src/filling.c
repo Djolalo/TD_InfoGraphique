@@ -5,10 +5,7 @@
 /**
  * Primitives de base non-relatives à des structures de données
 */
-typedef struct cote {
-    segment donnee;
-    struct cote *suivant;
-}*Liste;
+
 int Max(int a, int b) {
     if(a > b) {
         return a;
@@ -26,7 +23,7 @@ int Min(int a, int b) {
 }
 
 /*
-Prdmitives de base pour le segment
+Primitives de bases pour le segment
 */
 
 float Xmin(segment s){
@@ -38,28 +35,15 @@ float yMax(segment s){
 float dm(segment s){
     return s.dm;
 }
-void drawLine(float xa, float xb,float y){
-    while (xa<xb){
-        draw_pixel(xa,y);
-        xa++;
-    }
-}
-void drawLineListe(Liste l, int y) {
-    segment a,b;
-    int nbsegments = 0;
-    while(!estVide(suivant(l))) {
-        if(nbsegments%2 == 0) {
-            a = donnee(l);
-            b = donnee(suivant(l));
-            drawLine(a.Xmin, b.Xmin,y);
-        }
-        l = suivant(l);
-        nbsegments++;
-    }
-}
+
+
 /**
- * Prdmitives de base relatives pour notre liste
+ * Primitives de base relatives pour nos listes
 */
+typedef struct cote {
+    segment donnee;
+    struct cote *suivant;
+}*Liste;
 
 Liste initListe() {
     return NULL;
@@ -106,6 +90,22 @@ void freeCell(Liste *l) {
     ll = *l;
     *l = suivant(*l);
     free(ll);
+}
+/**
+ * Affiche toutes les lignes définies dans les segments contenus dans la liste
+*/
+void drawLineListe(Liste l, int y) {
+    segment a,b;
+    int nbsegments = 0;
+    while(!estVide(suivant(l))) {
+        if(nbsegments%2 == 0) {
+            a = donnee(l);
+            b = donnee(suivant(l));
+            drawLine(a.Xmin, b.Xmin,y);
+        }
+        l = suivant(l);
+        nbsegments++;
+    }
 }
 /**
  * Supprime de la liste tous les éléments à l'ordonnée max y
@@ -235,7 +235,11 @@ float xa,xb,ya,yb,dm,dy,dx;
         }
     }
 }
-
+/**
+ * Algorithme de remplissage on remplit un liste en fonction des ordonées,
+ * On va ensuite suprrimer l'indice qui vient d'être ajouté, puis on l'affiche
+ * Après avoir affiché, on incrémente les abcisses, et on passe l'ordonée suivante
+*/
 void remplir(PointCloud p){
     Liste tab[10000];
     int indice= sizeTab(p);

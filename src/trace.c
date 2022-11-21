@@ -68,3 +68,9 @@ void  draw_Circle(float x, float y){
     draw_pixel(-y,-x);
 }
 
+void drawLine(float xa, float xb,float y){
+    while (xa<xb){
+        draw_pixel(xa,y);
+        xa++;
+    }
+}

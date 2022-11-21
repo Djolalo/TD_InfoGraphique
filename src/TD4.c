@@ -43,14 +43,12 @@ void mouse_click(int button, int state, int x, int y) {
     }
 }
 
-void keyPressed (unsigned char key, int x, int y) {
+void keyPressed(unsigned char key, int x, int y) {
     points.tab_size = 0;
 }
 int main(int argc, char** argv) {
     initPointCloud(&points);
-    printf("Manuelle d'utilisation: trace des polygones de minimum 4 cotes. Il possible de continuer de tracer des points pour elargir le polygone.\n\
-           \nAppuyer sur n'importe quel touche pour reinitialiser le polygone.");
-
+    printf("Appuyer sur une touche du clavier supprime le polygone actuel\n");
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
     glutInitWindowSize(height, width);

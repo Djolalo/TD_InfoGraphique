@@ -52,7 +52,7 @@ void window_display() {
     glLoadIdentity();
     for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
         if(nuage.tab_size>=i+2)
-            (lastKey=='c')?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
+            (lastKey==CIRCLETIME)?PointMilieuCercle(nuage.tabPos[i][0], nuage.tabPos[i][1], nuage.tabPos[i+1][0], nuage.tabPos[i+1][1]):bresenhamGeneral(nuage.tabPos[i][0], nuage.tabPos[i+1][0], nuage.tabPos[i][1], nuage.tabPos[i+1][1]);
     }
     glFlush();
 }
@@ -75,6 +75,7 @@ void keyboard_press(unsigned char key, int x, int y){
 
 int main(int argc, char** argv) {
     initPointCloud(&nuage);
+    printf("Le programme est par défaut en mode tracage de segment, si vous desirez tracer un cercle, appuyez sur c\n");
     glutInit (&argc , argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE );
     glutInitWindowSize (height , width) ;

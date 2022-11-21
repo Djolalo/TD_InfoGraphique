@@ -4,7 +4,7 @@ BUILD=build
 LIBS=-lGL -lGLU -lglut -LGL -lX11 -lX11 -lm
 LIBSDIR=-I/usr/X11R6/include -L/usr/lib -L/usr/X11R6/lib
 
-all: TD2 TD3 TD1
+all: TD1 TD2 TD3 TD4 TD5
 
 TD5:  translations
 	${CC} ${SRC}/TD5.c -o ${BUILD}/TD5  ${BUILD}/pointManaging.o ${BUILD}/geometry.o ${LIBS} ${LIBSDIR} 
