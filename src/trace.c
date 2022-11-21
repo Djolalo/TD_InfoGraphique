@@ -1,8 +1,8 @@
 #include "include/trace.h"
 
-void draw_pixel(float x, float y){
+void draw_pixel(float x, float y) {
     glBegin(GL_POINTS);
-        glVertex2f(x,y);
+        glVertex2f(x, y);
     glEnd();
 }
 

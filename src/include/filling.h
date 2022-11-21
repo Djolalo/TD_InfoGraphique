@@ -9,16 +9,16 @@ typedef int bool;
 /**
  * Primitives de base non-relatives à des structures de données
 */
-int max(int a, int b);
-int min(int a, int b);
+int Max(int a, int b);
+int Min(int a, int b);
 /*
 Primitives de base pour le segment
 */
 
 typedef struct {
-    float xMin;
-    float im;
-    float yMax;
+    float Xmin;
+    float dm;
+    float Ymax;
 }segment;
 
 
@@ -38,20 +38,19 @@ bool estVide(Liste l);
 void inserTete(segment s, Liste *l);
 Liste dernier(Liste l);
 void inserQueue(segment n, Liste *l);
-void libererCellule(Liste *l);
-void viderListe(Liste *l);
-void viderTab(Liste *tab, int taille);
-Liste determinerAiListe(segment s, Liste *l);
+void freeCell(Liste *l);
+void suppIndiceListe(Liste *l, int y);
+void freeListe(Liste *l);
+void freeTab(Liste *tab, int taille);
 void inserEltListeTriee(segment elt, Liste *l);
-void incrementSegment(Liste *l);
-
+Liste incrementSegment(Liste l);
+void inserEltListeTrieeLCA(segment elt, Liste *l);
+void initTabListe(Liste *tab, int taille) ;
+void drawLineListe(Liste l, int y);
 /**
  * Primitives de base pour la structure SI
 */
-typedef struct{
-    Liste *tab;
-    int taille;
-}SI;
+
 void creerSIVIDE(Liste *tab,int taille);
 void creatSI(Liste *tab, PointCloud p);
 void remplir(PointCloud p);

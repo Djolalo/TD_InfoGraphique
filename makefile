@@ -8,7 +8,7 @@ all: TD2 TD3 TD1
 
 TD5:  translations
 	${CC} ${SRC}/TD5.c -o ${BUILD}/TD5  ${BUILD}/pointManaging.o ${BUILD}/geometry.o ${LIBS} ${LIBSDIR} 
-TD4: remplissage 
+TD4: remplissage
 	${CC} ${SRC}/TD4.c -o ${BUILD}/TD4 ${BUILD}/pointManaging.o ${BUILD}/trace.o ${BUILD}/filling.o ${LIBS} ${LIBSDIR} 
 TD3: points trace clipping
 	${CC} -o ${BUILD}/TD3 ${SRC}/TD3.c  ${BUILD}/pointManaging.o ${BUILD}/trace.o ${BUILD}/clipping.o ${LIBS} ${LIBSDIR}

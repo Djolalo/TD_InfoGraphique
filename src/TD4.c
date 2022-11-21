@@ -9,18 +9,17 @@
 #include <windows.h>
 #endif
 
-PointCloud nuage;
+PointCloud points;
 
-int height = 500;
-int width = 500;
-int click=0;
+int height=500;
+int width=500;
 unsigned char lastKey;
 
 void window_reshape(int width, int height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-width/2, width/2,-height/2, height/2, -1.0 , 1.0);
+    glOrtho(0, width, 0, height, 0 , height);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -28,35 +27,38 @@ void window_reshape(int width, int height) {
 void window_display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-    for(int i=0; i < nuage.tab_size && nuage.tab_size >=i; i+=2){
-        if(nuage.tab_size>=i+2){
-            remplir(nuage);
-        }
+    if(points.tab_size>3){
+        remplir(points);
     }
     glFlush();
 }
 
-void mouse_click(int button, int state, int x, int y){
-    float x2= x-width/2;
-    float y2= -(y-height/2); 
-    if (button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
-        insererPoint(&nuage, x2, y2);
-        click++;
+
+void mouse_click(int button, int state, int x, int y) {
+    if(button == GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
+        //Necessaire pour éviter tout y négatif
+        y = -(y - (height));
+        insererPoint(&points, x,y);
+        glutPostRedisplay();
     }
-    if(click%2==0)
-            glutPostRedisplay();
 }
 
+void keyPressed (unsigned char key, int x, int y) {
+    points.tab_size = 0;
+}
 int main(int argc, char** argv) {
-    initPointCloud(&nuage);
-    glutInit (&argc , argv);
-    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE );
-    glutInitWindowSize (height , width) ;
-    glutCreateWindow("Fixed Rectangle") ;
-    glColor3f(1.0, 1.0, 1.0);
+    initPointCloud(&points);
+    printf("Manuelle d'utilisation: trace des polygones de minimum 4 cotes. Il possible de continuer de tracer des points pour elargir le polygone.\n\
+           \nAppuyer sur n'importe quel touche pour reinitialiser le polygone.");
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+    glutInitWindowSize(height, width);
+    glutCreateWindow("Fixed Rectangle");
     glutDisplayFunc(window_display);
     glutReshapeFunc(window_reshape);
+    glutKeyboardFunc(keyPressed);
     glutMouseFunc(mouse_click);
     glutMainLoop();
-    return 0 ;
+    return 0;
 }

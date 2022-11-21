@@ -10,7 +10,7 @@ void insererPoint(PointCloud *p, float x, float y){
 
 void afficheNuage(PointCloud p){
     for(int i=0; i<p.tab_size;i++){
-        printf("X= %f, Y=%f", p.tabPos[i][0],p.tabPos[i][1]);
+        printf("X= %f, Y=%f\n", p.tabPos[i][0],p.tabPos[i][1]);
     }
 }
 float iemeAbcisse(int i, PointCloud p){
@@ -20,6 +20,17 @@ float iemeAbcisse(int i, PointCloud p){
 float iemeOrdonnee(int i, PointCloud p){
     return p.tabPos[i][1];
 }
-int tabSize(PointCloud p) {
+int taille(PointCloud p){
     return p.tab_size;
+}
+
+
+int sizeTab(PointCloud p) {
+    int i=0;
+    for (int j=0; j<p.tab_size;j++){
+        if(i<p.tabPos[j][1]){
+            i=p.tabPos[j][1];
+        }
+    }
+    return i;
 }

@@ -1,60 +1,69 @@
 #include "include/filling.h"
+#include <math.h>
 
-typedef struct cote{
-    segment donnee;
-    struct cote* suivant;
-}*Liste;
 
 /**
  * Primitives de base non-relatives à des structures de données
 */
-
-int max(int a, int b){
-    return (a>b)?a:b;
+typedef struct cote {
+    segment donnee;
+    struct cote *suivant;
+}*Liste;
+int Max(int a, int b) {
+    if(a > b) {
+        return a;
+    } else {
+        return b;
+    }
 }
-int min(int a, int b){
-    return (a>b)?a:b;
+
+int Min(int a, int b) {
+    if(a < b) {
+        return a;
+    } else {
+        return b;
+    }
 }
 
 /*
-Primitives de base pour le segment
+Prdmitives de base pour le segment
 */
 
-float xMin(segment s){
-    return s.xMin;
+float Xmin(segment s){
+    return s.Xmin;
 }
 float yMax(segment s){
-    return s.yMax;
+    return s.Ymax;
 }
-float im(segment s){
-    return s.im;
+float dm(segment s){
+    return s.dm;
 }
-void drawLine(float xa, float y, float xb){
+void drawLine(float xa, float xb,float y){
     while (xa<xb){
         draw_pixel(xa,y);
         xa++;
     }
 }
-void drawListe(Liste l, int indice){
+void drawLineListe(Liste l, int y) {
     segment a,b;
     int nbsegments = 0;
     while(!estVide(suivant(l))) {
         if(nbsegments%2 == 0) {
             a = donnee(l);
             b = donnee(suivant(l));
-            drawLine(a.xMin, b.xMin, indice);
+            drawLine(a.Xmin, b.Xmin,y);
         }
         l = suivant(l);
         nbsegments++;
     }
 }
 /**
- * Primitives de base relatives pour notre liste
+ * Prdmitives de base relatives pour notre liste
 */
-Liste initListe(){
+
+Liste initListe() {
     return NULL;
 }
-
 Liste allocMemRemp(segment s){
     Liste ret=(Liste) malloc(sizeof(Liste));
     ret->donnee= s;
@@ -92,63 +101,88 @@ void inserQueue(segment n, Liste *l) {
         inserTete(n, &(der->suivant));
     }
 }
-void libererCellule(Liste *l) {
+void freeCell(Liste *l) {
     Liste ll;
     ll = *l;
     *l = suivant(*l);
     free(ll);
 }
-void libererIemeCellule(Liste *l,int i){
+/**
+ * Supprime de la liste tous les éléments à l'ordonnée max y
+*/
+void nettoyerIndiceListe(Liste *l, int y) {
     if(!estVide(*l)) {
-        if(yMax(donnee(*l)) == i) {
-            libererCellule(l);
+        if((donnee(*l).Ymax) == y) {
+            freeCell(l);
             if(!estVide(*l)) {
-                libererIemeCellule(l, i);
+                nettoyerIndiceListe(l, y);
             }
         } else {
-            libererIemeCellule(&((*l)->suivant), i);
+            nettoyerIndiceListe(&((*l)->suivant), y);
         }
     }
 }
-void viderListe(Liste *l){
-    while (!estVide(*l)){
-        libererCellule(l);
-    }
-}
-void viderTab(Liste *tab, int taille) {
-    for(int i = 0; i < taille; i++) {
-        viderListe(&tab[i]);
-    }
-}
-Liste determinerAiListe(segment s, Liste *l){
-    if(estVide(*l)){
-        return NULL;
-    }
-    Liste as=suivant(*l);
-    while(!estVide(as)&&((donnee((*l)).xMin >=s.xMin))){
-        if((donnee(*l)).xMin >=s.xMin&&(donnee(*l)).im>s.im)
-            return *l;
-        *l=as;
-        as=suivant(*l);
-    }
-    return(*l);
-}
-
-void inserEltListeTriee(segment s, Liste *l) {
-
-    Liste ai=determinerAiListe(s, l);
-    inserTete(s, &ai); 
-}
-void incrementSegment(Liste *l) {
-    segment seg;
+void freeListe(Liste *l) {
     while(!estVide(*l)) {
-        seg = donnee(*l);
-        seg.xMin += im(seg);
-        (*l)->donnee= seg;
-        *l = suivant(*l);
+        freeCell(l);
     }
 }
 
+void freeTab(Liste *tab, int n) {
+    for(int i = 0; i < n; i++) {
+        freeListe(&tab[i]);
+    }
+}
+/**
+ * Insertion de l'élément en fonction de l'ordonnée la plus haute dans un tableau de liste
+*/
+void inserEltListeTriee(segment elt, Liste *l) {
+    if(estVide(*l) || donnee(*l).Ymax > elt.Ymax) {
+        inserTete(elt, l);
+    } else {
+        inserEltListeTriee(elt, &((*l)->suivant));
+    }
+}
+/**
+ * Déplace l'abcisse pour qu'il suive le segment qu'il devra tracer 
+*/
+Liste incrementSegment(Liste l) {
+    Liste res=l;
+    segment seg;
+    while(!estVide(l)) {
+        seg = donnee(l);
+        seg.Xmin += dm(seg);
+        l->donnee= seg;
+        l = suivant(l);
+    }
+    return res;
+}
+/**
+ * Insere l'élément en foncition de l'abcisse cette fois-ci.
+ * Si la cellule (cote) questionnée à la même abcisse, on et là où l'inverse de la pente est plus grand.
+*/
+void inserEltListeTrieeLCA(segment elt, Liste *l) {
+
+    if(estVide(*l) || ((donnee(*l).Xmin >= elt.Xmin))) {
+        if(!estVide(*l) && (donnee(*l).Xmin == elt.Xmin) && (donnee(*l).dm <= elt.dm)) {
+            inserEltListeTrieeLCA(elt, &((*l)->suivant));
+        } else {
+            inserTete(elt, l);
+        }
+    } else {
+        inserEltListeTrieeLCA(elt, &((*l)->suivant));
+    }
+}
+
+/**
+ * Initialise un tableau de listes à l'aide de la taille en paramètre
+ * @param: tab :(Liste *), taille:int 
+*/
+void initTabListe(Liste *tab, int taille) {
+    for(int i=0; i<taille;i++){
+        tab[i]=initListe();
+    }
+}
 /**
  * Primitives de base pour la structure SI
 */
@@ -157,13 +191,17 @@ void creerSIVIDE(Liste *tab,int taille){
         tab[i]=initListe();
     }
 }
+
+/**
+ * Crée le tableau de listes de segment, nécessaire à l'affichage qui viendra plus tard
+*/
 void creatSI(Liste *tab, PointCloud p) {
-int xMin,Ymax,y;
+int Xmin,yMax,y;
 Liste l;
 segment s;
 float xa,xb,ya,yb,dm,dy,dx;
-    for(int i = 0; i < tabSize(p); i++) {
-        if(i==(tabSize(p) - 1)) {
+    for(int i = 0; i < taille(p); i++) {
+        if(i==(taille(p) - 1)) {
             xa = iemeAbcisse(i,p);
             ya = iemeOrdonnee(i,p);
             xb = iemeAbcisse(0,p);
@@ -176,21 +214,23 @@ float xa,xb,ya,yb,dm,dy,dx;
         }
         dx = xb - xa;
         dy = yb - ya;
+        /**
+         * Le tableau n'a pas d'indice négatif
+        */
         if(dy != 0) {
-            segment seg;
-            y = min(ya, yb);
+            y = Min(ya, yb);
             l = tab[y];
             if(ya > yb) {
-                xMin = xb;
+                Xmin = xb;
             } else {
-                xMin = xa;
+                Xmin = xa;
             }
             dm = dx/dy;
-            Ymax = max(ya, yb);
-            seg.im = dm;
-            seg.xMin = xMin;
-            seg.yMax = Ymax;
-            inserEltListeTriee(seg, &l);
+            yMax = Max(ya, yb);
+            s.dm = dm;
+            s.Xmin = Xmin;
+            s.Ymax = yMax;
+            inserEltListeTriee(s, &l);
             tab[y] = l;
         }
     }
@@ -198,26 +238,26 @@ float xa,xb,ya,yb,dm,dy,dx;
 
 void remplir(PointCloud p){
     Liste tab[10000];
-    int n = p.tab_size;
-    creerSIVIDE(tab, n);
+    int indice= sizeTab(p);
+    initTabListe(tab, indice);
     creatSI(tab, p);
     Liste LCA = initListe();
     Liste Ltemp = initListe();
-    Liste l;
-    for(int y = 0; y <= n; y++) {
+    Liste l, tetelca;
+    for(int y = 0; y <= indice; y++) {
         l = tab[y];
         while(!estVide(l)) {
-            inserEltListeTriee(donnee(l), &LCA);
+            inserEltListeTrieeLCA(donnee(l), &LCA);
             l = suivant(l);
         }
-        libererIemeCellule(&LCA, y);
+        nettoyerIndiceListe(&LCA, y);
         if(!estVide(LCA)) {
             Ltemp = LCA;
-            drawListe(Ltemp, y);
+            drawLineListe(Ltemp, y);
         }
         Ltemp = LCA;
-        incrementSegment(&Ltemp);
+        Ltemp =incrementSegment(Ltemp);
     }
-    viderTab(tab, n);
-    viderListe(&LCA);
+    freeTab(tab, indice);
+    freeListe(&LCA);
 }

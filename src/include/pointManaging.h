@@ -11,5 +11,6 @@ void insererPoint(PointCloud *p, float x, float y);
 void afficheNuage(PointCloud p);
 float iemeAbcisse(int i, PointCloud p);
 float iemeOrdonnee(int i, PointCloud p);
-int tabSize(PointCloud p);
+int taille(PointCloud p);
+int sizeTab(PointCloud p);
 #endif

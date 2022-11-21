@@ -2,7 +2,7 @@
 #define clipping
 
 #include <stdbool.h>
-#include "include/pointManaging.h"
+#include "pointManaging.h"
 
 
 int calcule_code(float x, float y, float xmin, float ymin, float xmax, float ymax);
